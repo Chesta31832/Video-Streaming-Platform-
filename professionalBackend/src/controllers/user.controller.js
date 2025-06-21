@@ -231,7 +231,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
         throw new apiError(400, 'Full name and email are required');
     }
 
-    User.findByIdAndUpdate(
+    const user = await User.findByIdAndUpdate(
         req.user?._id,
         {
             $set: {
@@ -249,7 +249,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 });
 
 const updateUserAvatar = asyncHandler(async (req, res) => {
-    const avatarLocalPath = req.files?.path;
+    const avatarLocalPath = req.file?.path;
 
     if(!avatarLocalPath) {
         throw new apiError(400, 'Avatar is required');
@@ -273,7 +273,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 });
 
 const updateUserCoverImage = asyncHandler(async (req, res) => {
-    const coverImageLocalPath = req.files?.path;
+    const coverImageLocalPath = req.file?.path;
 
     if(!coverImageLocalPath) {
         throw new apiError(400, 'Cover image is required');
@@ -296,6 +296,70 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
     );
 });
 
+const getUserChannelProfile = asyncHandler(async (req, res) => {
+    const {userName} = req.params;
+
+    if(!userName?.trim()) {
+        throw new apiError(400, 'Username is required');
+    }
+
+    const channel=await User.aggregate([
+        {
+            $match: { 
+                userName: userName?.toLowerCase() 
+            }
+        },
+        {
+            $lookup: {
+                from: 'subscriptions',
+                localField: '_id',
+                foreignField: 'channel',
+                as: 'subscribers'
+            }
+        },
+        {
+            $lookup: {
+                from: 'subscriptions',
+                localField: '_id',
+                foreignField: 'subscriber',
+                as: 'subscribedTo'
+            }
+        },
+        {
+            $addFields: {
+                subscriberCount: { $size: '$subscribers' },
+                channelsSubscribedToCount: { $size: '$subscribedTo' }
+            },
+            isSubscribed: {
+                $cond: {
+                    if: { $in: [req.user?._id, '$subscribers.subscriber'] },
+                    then: true,
+                    else: false
+                }
+            }
+        },
+        {
+            $project:{
+                fullName: 1,
+                userName: 1,
+                subscriberCount: 1,
+                channelsSubscribedToCount: 1,
+                isSubscribed: 1,
+                avatar: 1,
+                coverImage: 1,
+                email: 1
+            }
+        }
+    ])
+
+    if(!channel.length) {
+        throw new apiError(404, 'Channel not found');
+    }
+
+    return res.status(200).json(
+        new apiResponse(200, channel[0], 'Channel profile fetched successfully')
+    );
+});
 
 
-export { registerUser, loginUser, logoutUser, refreshAccessToken, changeCurrentUserPassword, getCurrentUser, updateAccountDetails, updateUserAvatar, updateUserCoverImage };
+export { registerUser, loginUser, logoutUser, refreshAccessToken, changeCurrentUserPassword, getCurrentUser, updateAccountDetails, updateUserAvatar, updateUserCoverImage , getUserChannelProfile };
