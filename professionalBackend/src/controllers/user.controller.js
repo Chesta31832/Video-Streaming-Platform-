@@ -7,11 +7,9 @@ import {apiResponse} from '../utils/apiResponse.js';
 const generateAccessAndRefreshToken = async (userId) => {
     try {
         const user = await User.findById(userId);
-        const accessToken = user.generateAccessToken();
-        const refreshToken = user.generateRefreshToken();
-
-        user.refreshToken = refreshToken;
-        user.save({ validateBeforeSave: false });
+        const accessToken = user.generateaccessToken();
+        const refreshToken = user.generateRefreshToken();        user.refreshToken = refreshToken;
+        await user.save({ validateBeforeSave: false });
 
         return { accessToken, refreshToken };
 
@@ -79,11 +77,14 @@ const registerUser = asyncHandler(async (req, res) => {
 
 });
 
-const loginUser = asyncHandler(async (req, res) => {
+const loginUser = asyncHandler(async (req, res) => {  
 
+    console.log("Request Body:", req.body);
     const {email, userName, password} = req.body;
-    if(!email && !userName ) {
-        throw new apiError(400, 'Email and username are required');
+    console.log("email", email);
+
+    if (!userName && !email) {
+        throw new apiError(400, "username or email is required")
     }
 
     const user = await User.findOne({
@@ -97,7 +98,7 @@ const loginUser = asyncHandler(async (req, res) => {
         throw new apiError(404, 'User not found');
     }
 
-    const isPasswordValid = await user.comparePassword(password);
+    const isPasswordValid = await user.isPasswordCorrect(password);
 
     if(!isPasswordValid) {
         throw new apiError(401, 'Invalid password');
