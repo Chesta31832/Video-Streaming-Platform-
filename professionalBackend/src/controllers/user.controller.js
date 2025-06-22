@@ -4,12 +4,14 @@ import {User} from '../models/user.model.js';
 import {uploadOnCloudinary} from '../utils/cloudinary.js';
 import {apiResponse} from '../utils/apiResponse.js';
 import jwt from 'jsonwebtoken';
+import mongoose from 'mongoose';
 
 const generateAccessAndRefreshToken = async (userId) => {
     try {
         const user = await User.findById(userId);
         const accessToken = user.generateaccessToken();
-        const refreshToken = user.generateRefreshToken();        user.refreshToken = refreshToken;
+        const refreshToken = user.generateRefreshToken();        
+        user.refreshToken = refreshToken;
         await user.save({ validateBeforeSave: false });
 
         return { accessToken, refreshToken };
@@ -198,7 +200,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         throw new apiError(401, error?.message || 'Unauthorized access, invalid refresh token');
     }
 
-})
+});
 
 const changeCurrentUserPassword = asyncHandler(async (req, res) => {
     const{oldPassword, newPassword} = req.body;
@@ -218,7 +220,7 @@ const changeCurrentUserPassword = asyncHandler(async (req, res) => {
         new apiResponse(200, null, 'Password changed successfully')
     );
 
-})
+});
 
 const getCurrentUser = asyncHandler(async (req, res) => {
     return res
@@ -323,8 +325,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
                 as: 'subscribers'
             }
         },
-        {
-            $lookup: {
+        {            $lookup: {
                 from: 'subscriptions',
                 localField: '_id',
                 foreignField: 'subscriber',
@@ -334,13 +335,13 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
         {
             $addFields: {
                 subscriberCount: { $size: '$subscribers' },
-                channelsSubscribedToCount: { $size: '$subscribedTo' }
-            },
-            isSubscribed: {
-                $cond: {
-                    if: { $in: [req.user?._id, '$subscribers.subscriber'] },
-                    then: true,
-                    else: false
+                channelsSubscribedToCount: { $size: '$subscribedTo' },
+                isSubscribed: {
+                    $cond: {
+                        if: { $in: [req.user?._id, '$subscribers.subscriber'] },
+                        then: true,
+                        else: false
+                    }
                 }
             }
         },
@@ -368,21 +369,21 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
 });
 
 const getWatchHistory = asyncHandler(async (req, res) => {
-    const user=await User.aggregate([
+    const user = await User.aggregate([
         {
-            $match:{
+            $match: {
                 _id: new mongoose.Types.ObjectId(req.user._id)
             }
         },
         {
-            $lookup:{
+            $lookup: {
                 from: 'videos',
                 localField: 'watchHistory',
                 foreignField: '_id',
                 as: 'watchHistory',
-                pipeline:[
+                pipeline: [
                     {
-                        $lookup:{
+                        $lookup: {
                             from: 'users',
                             localField: 'owner',
                             foreignField: '_id',
@@ -411,11 +412,7 @@ const getWatchHistory = asyncHandler(async (req, res) => {
     return res.status(200).json(
         new apiResponse(200, user[0]?.watchHistory || [], 'Watch history fetched successfully')
     );
-
 });
-
-
-
 
 
 export { registerUser, loginUser, logoutUser, refreshAccessToken, changeCurrentUserPassword, getCurrentUser, updateAccountDetails, updateUserAvatar, updateUserCoverImage , getUserChannelProfile,getWatchHistory };
