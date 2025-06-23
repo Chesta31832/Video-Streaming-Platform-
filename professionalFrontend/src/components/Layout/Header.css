@@ -1,0 +1,179 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  height: 56px;
+  background-color: #0f0f0f;
+  border-bottom: 1px solid #303030;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.hamburger-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.hamburger-menu span {
+  width: 18px;
+  height: 2px;
+  background-color: #ffffff;
+  transition: 0.3s;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.header-center {
+  flex: 1;
+  max-width: 640px;
+  margin: 0 40px;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.search-input {
+  flex: 1;
+  height: 40px;
+  padding: 0 16px;
+  background-color: #121212;
+  border: 1px solid #303030;
+  border-radius: 2px 0 0 2px;
+  color: #ffffff;
+  font-size: 16px;
+}
+
+.search-input::placeholder {
+  color: #aaaaaa;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #065fd4;
+}
+
+.search-btn {
+  width: 64px;
+  height: 40px;
+  background-color: #222222;
+  border: 1px solid #303030;
+  border-left: none;
+  border-radius: 0 2px 2px 0;
+  color: #ffffff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-btn:hover {
+  background-color: #404040;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.create-btn, .login-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background-color: transparent;
+  border: 1px solid #303030;
+  border-radius: 18px;
+  color: #065fd4;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.create-btn:hover, .login-btn:hover {
+  background-color: rgba(6, 95, 212, 0.1);
+}
+
+.user-menu {
+  position: relative;
+}
+
+.profile-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.profile-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #282828;
+  border: 1px solid #404040;
+  border-radius: 8px;
+  padding: 8px 0;
+  min-width: 150px;
+  display: none;
+}
+
+.user-menu:hover .dropdown-menu {
+  display: block;
+}
+
+.dropdown-menu button {
+  width: 100%;
+  padding: 8px 16px;
+  background: none;
+  border: none;
+  color: #ffffff;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.dropdown-menu button:hover {
+  background-color: #404040;
+}
+
+@media (max-width: 768px) {
+  .header-center {
+    margin: 0 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hamburger-menu {
+    display: none;
+  }
+}

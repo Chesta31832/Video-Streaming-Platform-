@@ -1,0 +1,75 @@
+.history {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.history-header h1 {
+  font-size: 28px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.clear-btn {
+  padding: 8px 16px;
+  background-color: #222222;
+  border: none;
+  border-radius: 4px;
+  color: #ffffff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.clear-btn:hover {
+  background-color: #404040;
+}
+
+.videos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.no-videos {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  text-align: center;
+}
+
+.no-videos h2 {
+  color: #ffffff;
+  margin-bottom: 16px;
+}
+
+.no-videos p {
+  color: #aaaaaa;
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  .history {
+    padding: 16px;
+  }
+  
+  .history-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  
+  .videos-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+}
